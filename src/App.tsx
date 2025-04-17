@@ -24,31 +24,34 @@ const queryClient = new QueryClient({
 const App = () => {
   const { setBooks, setCategories } = useStore();
   
-  // Carregar dados logo na inicialização
+  // Load data at startup
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        console.log("Carregando dados iniciais...");
+        console.log("Carregando livros...");
         const data = await fetchBooks();
-        console.log("Dados carregados:", data);
         
         if (data.books.length === 0) {
           console.warn("Nenhum livro encontrado na planilha.");
           toast({
-            title: "Aviso",
-            description: "Não foi possível carregar os livros da planilha. Verifique a conexão e tente novamente.",
+            title: "Atenção",
+            description: "Não encontramos livros na planilha. Verifique a configuração.",
             variant: "destructive",
           });
         } else {
           setBooks(data.books);
           setCategories(data.categories);
-          console.log("Dados armazenados no estado global.");
+          console.log(`${data.books.length} livros carregados.`);
+          toast({
+            title: "Biblioteca Carregada",
+            description: `${data.books.length} livros disponíveis em ${data.categories.length} categorias.`,
+          });
         }
       } catch (error) {
-        console.error("Erro ao carregar dados iniciais:", error);
+        console.error("Erro ao carregar dados:", error);
         toast({
           title: "Erro",
-          description: "Ocorreu um erro ao carregar os dados. Verifique o console para mais detalhes.",
+          description: "Não foi possível carregar a biblioteca. Tente novamente.",
           variant: "destructive",
         });
       }
@@ -57,7 +60,7 @@ const App = () => {
     loadInitialData();
   }, [setBooks, setCategories]);
   
-  // Forçar o modo escuro como padrão
+  // Force dark mode as default
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
@@ -71,7 +74,6 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
