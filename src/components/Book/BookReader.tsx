@@ -129,8 +129,9 @@ const BookReader: React.FC<BookReaderProps> = ({ book, isOpen, onClose }) => {
     
     setIsExplaining(true);
     try {
-      const explanation = await explainAndSpeak(book.title, book.synopsis);
-      setExplanation(explanation);
+      // Fix here: extract just the text part from the response
+      const result = await explainAndSpeak(book.title, book.synopsis);
+      setExplanation(result.text); // Use only the text property from the return value
     } catch (error) {
       console.error('Erro ao explicar livro:', error);
       toast({
